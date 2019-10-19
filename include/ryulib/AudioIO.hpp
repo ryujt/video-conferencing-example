@@ -41,7 +41,7 @@ public:
 		inputParameters.device = Pa_GetDefaultInputDevice();
 		if (inputParameters.device == paNoDevice) {
 			DebugOutput::trace("Error: No default input device. \n");
-			if (OnError_ != nullptr) OnError_(ERROR_NO_DEFAULT_INPUT_DEVICE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_NO_DEFAULT_INPUT_DEVICE);
 			return ERROR_NO_DEFAULT_INPUT_DEVICE;
 		}
 
@@ -53,14 +53,14 @@ public:
 		err = Pa_OpenStream(&stream_, &inputParameters, NULL, sampe_rate_, FRAMES_PER_BUFFER, paClipOff, recordCallback, this);
 		if (err != paNoError) {
 			DebugOutput::trace("Error: AudioInput- Pa_OpenStream \n");
-			if (OnError_ != nullptr) OnError_(ERROR_OPEN_INPUT_DEVICE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_OPEN_INPUT_DEVICE);
 			return ERROR_OPEN_INPUT_DEVICE;
 		}
 
 		err = Pa_StartStream(stream_);
 		if (err != paNoError) {
 			DebugOutput::trace("Error: AudioInput - Pa_StartStream \n");
-			if (OnError_ != nullptr) OnError_(ERROR_START_INPUT_DEVICE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_START_INPUT_DEVICE);
 			return ERROR_START_INPUT_DEVICE;
 		}
 
@@ -86,7 +86,7 @@ private:
 	{
 
 		AudioInput *audio_input = (AudioInput *) userData;
-		if (audio_input->on_data_ != nullptr) audio_input->on_data_(inputBuffer, audio_input->buffer_size_);
+		if (audio_input->on_data_ != nullptr) audio_input->on_data_(audio_input, inputBuffer, audio_input->buffer_size_);
 
 		return paContinue;
 	}
@@ -120,7 +120,7 @@ public:
 		outputParameters.device = Pa_GetDefaultOutputDevice();
 		if (outputParameters.device == paNoDevice) {
 			DebugOutput::trace("Error: AudioOutput - paNoDevice \n");
-			if (OnError_ != nullptr) OnError_(ERROR_NO_DEFAULT_OUTPUT_DEVICE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_NO_DEFAULT_OUTPUT_DEVICE);
 			return ERROR_NO_DEFAULT_OUTPUT_DEVICE;
 		}
 		outputParameters.channelCount = channels_;
@@ -131,14 +131,14 @@ public:
 		err = Pa_OpenStream(&stream_, NULL, &outputParameters, sampe_rate_, FRAMES_PER_BUFFER, paClipOff, playCallback, this);
 		if (err != paNoError) {
 			DebugOutput::trace("Error: AudioOutput - Pa_OpenStream \n");
-			if (OnError_ != nullptr) OnError_(ERROR_OPEN_OUTPUT_DEVICE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_OPEN_OUTPUT_DEVICE);
 			return ERROR_OPEN_OUTPUT_DEVICE;
 		}
 
 		err = Pa_StartStream(stream_);
 		if (err != paNoError) {
 			DebugOutput::trace("Error: AudioOutput - Pa_StartStream \n");
-			if (OnError_ != nullptr) OnError_(ERROR_START_OUTPUT_DEVICE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_START_OUTPUT_DEVICE);
 			return ERROR_START_OUTPUT_DEVICE;
 		}
 
@@ -152,8 +152,7 @@ public:
 
 	void play(const void *data, int size)
 	{
-		Memory* memory = new Memory();
-		memory->clone(data, size);
+		Memory* memory = new Memory(data, size);
 		queue_.push(memory);
 	}
 
