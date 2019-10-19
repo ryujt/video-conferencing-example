@@ -13,13 +13,13 @@ using namespace std;
 
 class AudioDecoder {
 public:
-	AudioDecoder()
+	AudioDecoder(int channels, int sampe_rate)
 	{
 		int errorCode;
-		opus_ = opus_decoder_create(SAMPLE_RATE, CHANNEL, &errorCode);
+		opus_ = opus_decoder_create(sampe_rate, channels, &errorCode);
 		if (errorCode < 0) {
 			DebugOutput::trace("Error - opus_decoder_create (%d)\n", ERROR_OPEN_DECODE);
-			if (OnError_ != nullptr) OnError_(ERROR_OPEN_DECODE);
+			if (OnError_ != nullptr) OnError_(this, ERROR_OPEN_DECODE);
 		}
 
 		queue_ = new SuspensionQueue<Memory*>();
@@ -35,8 +35,7 @@ public:
 			}
 		}
 
-		Memory* memory = new Memory();
-		memory->clone(data, size);
+		Memory* memory = new Memory(data, size);
 		queue_->push(memory);
 	}
 
@@ -51,7 +50,7 @@ private:
 
 			char buffer[FRAMES_PER_BUFFER * SAMPLE_SIZE * CHANNEL];
 			int size_out = opus_decode_float(opus_, (unsigned char*) memory->getData(), memory->getSize(), (float*) buffer, sizeof(buffer), 0) * SAMPLE_SIZE;
-			if (OnDecode_ != nullptr) OnDecode_(buffer, size_out);
+			if (OnDecode_ != nullptr) OnDecode_(this, buffer, size_out);
 
 			delete memory;
 		}

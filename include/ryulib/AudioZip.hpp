@@ -12,23 +12,22 @@ using namespace std;
 
 class AudioZip {
 public:
-	AudioZip()
-		: audio_input_(CHANNEL, SAMPLE_RATE)
+	AudioZip(int channels, int sampe_rate)
+		: audio_input_(channels, sampe_rate), audio_encoder_(channels, sampe_rate)
 	{
 		audio_encoder_.setOnError(
-			[&](int error_code) {
-				if (OnError_ != nullptr) OnError_(error_code);
+			[&](const void* obj, int error_code) {
+				if (OnError_ != nullptr) OnError_(this, error_code);
 			}
 		);
 
 		audio_input_.setOnError(
-			[&](int error_code) {
-				if (OnError_ != nullptr) OnError_(error_code);
+			[&](const void* obj, int error_code) {
+				if (OnError_ != nullptr) OnError_(this, error_code);
 			}
 		);
 		audio_input_.setOnData(
-			[&](const void* buffer, int buffer_size) {
-				//printf("buffer_size: %d \n", buffer_size);
+			[&](const void* obj, const void* buffer, int buffer_size) {
 				audio_encoder_.add(buffer, buffer_size);
 			}
 		);

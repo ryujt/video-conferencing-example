@@ -10,8 +10,8 @@ int main()
 	audio_output.open();
 
 	AudioInput audio_input(2, SAMPLE_RATE);
-	audio_input.setOnData([&](const void* obj, const void* buffer, int buffer_size) {
-		audio_output.play(buffer, buffer_size);
+	audio_input.setOnData([&](const void* obj, const void* data, int size) {
+		audio_output.play(data, size);
 	});
 	audio_input.open();
 

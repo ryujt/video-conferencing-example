@@ -11,24 +11,23 @@ using namespace std;
 
 class AudioUnZip {
 public:
-	AudioUnZip()
-		: audio_output_(CHANNEL, SAMPLE_RATE)
+	AudioUnZip(int channels, int sampe_rate)
+		: audio_output_(channels, sampe_rate), audio_decoder_(channels, sampe_rate)
 	{
 		audio_output_.setOnError(
-			[&](int error_code) {
-				if (OnError_ != nullptr) OnError_(error_code);
+			[&](const void* obj, int error_code) {
+				if (OnError_ != nullptr) OnError_(this, error_code);
 			}
 		);
 		audio_output_.open();
 
 		audio_decoder_.setOnError(
-			[&](int error_code) {
-				if (OnError_ != nullptr) OnError_(error_code);
+			[&](const void* obj, int error_code) {
+				if (OnError_ != nullptr) OnError_(this, error_code);
 			}
 		);
 		audio_decoder_.setOnDecode(
-			[&](const void* data, int size) {
-				//printf("size: %d \n", size);
+			[&](const void* obj, const void* data, int size) {
 				audio_output_.play(data, size);
 			}
 		);
