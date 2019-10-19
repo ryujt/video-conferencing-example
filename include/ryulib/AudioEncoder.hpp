@@ -13,21 +13,21 @@ using namespace std;
 
 class AudioEncoder {
 public:
-	AudioEncoder()
+	AudioEncoder(int channels, int sampe_rate)
 	{
 		int errorCode;
 
-		opus_ = opus_encoder_create(SAMPLE_RATE, CHANNEL, OPUS_APPLICATION_AUDIO, &errorCode);
+		opus_ = opus_encoder_create(sampe_rate, channels, OPUS_APPLICATION_AUDIO, &errorCode);
 		if (errorCode < 0) {
 			DebugOutput::trace("Error - opus_encoder_create (%d)\n", ERROR_OPEN_ENCODER);
-			if (OnError_ != nullptr) OnError_(ERROR_OPEN_ENCODER);
+			if (OnError_ != nullptr) OnError_(this, ERROR_OPEN_ENCODER);
 		}
 
 		errorCode = opus_encoder_ctl(opus_, OPUS_SET_BITRATE(BITRATE));
 		if (errorCode < 0) {
 			opus_encoder_destroy(opus_);
 			DebugOutput::trace("Error - opus_encoder_ctl (%d)\n", ERROR_OPEN_ENCODER);
-			if (OnError_ != nullptr) OnError_(ERROR_OPEN_ENCODER);
+			if (OnError_ != nullptr) OnError_(this, ERROR_OPEN_ENCODER);
 		}
 
 		queue_ = new SuspensionQueue<Memory*>();
@@ -36,8 +36,7 @@ public:
 
 	void add(const void* data, int size) 
 	{
-		Memory* memory = new Memory();
-		memory->clone(data, size);
+		Memory* memory = new Memory(data, size);
 		queue_->push(memory);
 	}
 
@@ -52,7 +51,7 @@ private:
 
 			char buffer[FRAMES_PER_BUFFER * SAMPLE_SIZE * CHANNEL];
 			int size_out = opus_encode_float(opus_, (float*) data->getData(), FRAMES_PER_BUFFER, (unsigned char*) buffer, sizeof(buffer));
-			if (OnEncode_ != nullptr) OnEncode_(buffer, size_out);
+			if (OnEncode_ != nullptr) OnEncode_(this, buffer, size_out);
 
 			delete data;
 		}
