@@ -1,11 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <ryulib/AudioIO.hpp>
 
 int main(void) {
 	Audio::init();
 
-	AudioInput audio_input(2, SAMPLE_RATE);
+	AudioInput audio_input(2, 48000);
 	audio_input.setOnData([](const void* obj, const void* data, int size) {
 		printf("buffer_size: %d \n", size);
 	});

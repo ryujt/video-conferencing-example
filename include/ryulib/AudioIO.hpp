@@ -12,6 +12,9 @@ using namespace std;
 
 class Audio {
 public:
+	/** 오디오 장치를 초기화한다. AudioIO를 사용하기 전에 반드시 호출되어야 한다.
+	@return 정상처리되면 true가 리턴된다.
+	*/
 	static int init()
 	{
 		PaError err = paNoError;
@@ -28,11 +31,18 @@ public:
 
 class AudioInput {
 public:
+	/** AudioInput 생성자
+	@param channels 캡쳐할 오디오의 채널 수. 1: 모노, 2: 스테레오
+	@param sampe_rate 캡쳐할 오디오의 sampling rate. 초당 캡쳐할 샘플링(오디오의 데이터) 개수
+	*/
 	AudioInput(int channels, int sampe_rate)
 		: channels_(channels), sampe_rate_(sampe_rate), buffer_size_(SAMPLE_SIZE * FRAMES_PER_BUFFER * channels) 
 	{
 	}
 
+	/** 오디오 장치를 오픈
+	@return 에러 코드가 리턴된다. 정상처리되면 0이 리턴된다.
+	*/
 	int open() 
 	{
 		PaError err = paNoError;
@@ -67,17 +77,28 @@ public:
 		return 0;
 	}
 
+	/** 오디오 장치를 닫는다. 오디오 캡쳐가 중단된다. */
 	void close() 
 	{
 		Pa_CloseStream(stream_);
 	}
 
+	/** 오디오가 캡쳐되는 중인지 알려준다.
+	@return true: 오디오 캡쳐 중, false: 오디오 캡쳐가 중단됨
+	*/
 	bool is_active()
 	{
 		return Pa_IsStreamActive(stream_) == 1;
 	}
 
+	/** OnError 이벤트 핸들러를 지정한다.
+	@param event 에러가 났을 때 실행될 이벤트 핸들러
+	*/
 	void setOnError(IntegerEvent event) { OnError_ = event; }
+
+	/** OnData 이벤트 핸들러를 지정한다.
+	@param event 오디오가 캡쳐되었을 때 실행될 이벤트 핸들러
+	*/
 	void setOnData(const DataEvent &value) { on_data_ = value; }
 
 private:

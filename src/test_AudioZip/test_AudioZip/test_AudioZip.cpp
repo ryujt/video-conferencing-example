@@ -1,17 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <ryulib/AudioZip.hpp>
 #include <ryulib/AudioUnZip.hpp>
 
 int main(void) {
 	Audio::init();
 
-	AudioUnZip unzip(1, SAMPLE_RATE);
+	AudioUnZip unzip(1, 48000);
 	unzip.setOnError([&](const void* obj, int error_code) {
 		printf("AudioUnZip - error: %d", error_code);
 	});
 
-	AudioZip zip(1, SAMPLE_RATE);
+	AudioZip zip(1, 48000);
 	zip.setOnError([&](const void* obj, int error_code) {
 		printf("AudioZip - error: %d", error_code);
 	});

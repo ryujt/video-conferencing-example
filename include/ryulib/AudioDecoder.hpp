@@ -26,7 +26,7 @@ public:
 		thread_ = new SimpleThread(thread_OnExecute);
 	}
 
-	void play(const void* data, int size) 
+	void add(const void* data, int size) 
 	{
 		if (queue_->size() > MAX_DELAY_LIMIT_COUNT) {
 			while (queue_->size() > 2) {
