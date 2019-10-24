@@ -3,9 +3,11 @@
 
 
 #include <ryulib/SimpleThread.hpp>
-#include <ryulib/ThreadQueue.hpp>
+#include <ryulib/SuspensionQueue.hpp>
 
 using namespace std;
+
+const int TASK_STRING = -1;
 
 class TaskOfWorker
 {
@@ -14,6 +16,7 @@ public:
 	void* data;
 	int size;
 	int tag;
+	string text;
 
 	TaskOfWorker(int t, void* d, int s, int g) {
 		task = t;
@@ -24,7 +27,7 @@ public:
 };
 
 typedef function<void(int, void*, int, int)> TaskEvent;
-typedef function<void()> RepeatEvent;
+typedef function<void(const string)> StringEvent;
 
 class Worker {
 public:
@@ -33,77 +36,68 @@ public:
 	}
 
 	~Worker() {
-		stop();
 		delete thread_;
 	}
 
 	void terminateAndWait()
 	{
-		stop();
 		thread_->terminateAndWait();
 	}
 
 	void terminateNow()
 	{
-		stop();
 		thread_->terminateNow();
 	}
 
-	void start() {
-		started_ = true;
+	void add(string text) {
+		TaskOfWorker* t = new TaskOfWorker(TASK_STRING, nullptr, 0, 0);
+		t->text = text;
+		queue_.push(t);
 	}
 
-	void stop() {
-		started_ = false;
-	}
-	
 	void add(int task) {
+		if (task < 0) throw "task must higher than 0.";
+
 		TaskOfWorker* t = new TaskOfWorker(task, nullptr, 0, 0);
 		queue_.push(t);
 	}
 
 	void add(int task, void* data) {
+		if (task < 0) throw "task must higher than 0.";
+
 		TaskOfWorker* t = new TaskOfWorker(task, data, 0, 0);
 		queue_.push(t);
 	}
 
 	void add(int task, void* data, int size, int tag) {
+		if (task < 0) throw "task must higher than 0.";
+
 		TaskOfWorker* t = new TaskOfWorker(task, data, size, tag);
 		queue_.push(t);
 	}
 
-	void sleep(int millis)
-	{
-		thread_->sleep(millis);
-	}
-
 	void setOnTask(const TaskEvent& value) { on_task_ = value; }
-	void setOnRepeat(const RepeatEvent& value) { on_repeat_ = value; }
+	void setOnString(const StringEvent& value) { on_string_ = value; }
 
 private:
 	bool started_ = false;
-	ThreadQueue<TaskOfWorker*> queue_;
+	SuspensionQueue<TaskOfWorker*> queue_;
 	SimpleThread* thread_;
 	SimpleThreadEvent on_thread_execute = [&](SimpleThread * simpleThread) {
 		while (simpleThread->isTerminated() == false) {
 			TaskOfWorker* t = queue_.pop();
-			if (t != NULL) {
-				if (on_task_ != nullptr) on_task_(t->task, t->data, t->size, t->tag);
-				delete t;
+			if (t->task == TASK_STRING) {
+				if (on_string_ != nullptr) on_string_(t->text);
+			} else  if (on_task_ != nullptr) {
+				on_task_(t->task, t->data, t->size, t->tag);
 			}
 
-			if (started_) {
-				if (on_repeat_ != nullptr) {
-					on_repeat_();
-				} else {
-					thread_->sleep(1);
-				}
-			}
+			delete t;
 		}
 	};
 
 	TaskEvent on_task_ = nullptr;
-	RepeatEvent on_repeat_ = nullptr;
+	StringEvent on_string_ = nullptr;
 };
 
 

@@ -15,6 +15,30 @@ using namespace std;
 
 class CameraList
 {
+public:
+	CameraList()
+		: names_()
+	{
+	}
+
+	void update()
+	{
+		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		if (FAILED(hr)) return;
+
+		IEnumMoniker *pEnum;
+		hr = enumerateDevices(CLSID_VideoInputDeviceCategory, &pEnum);
+		if (SUCCEEDED(hr)) {
+			displayDeviceInformation(pEnum);
+			pEnum->Release();
+		}
+
+		CoUninitialize();
+	}
+
+	int size() { return names_.size();  }
+	string getName(int index) { return names_.at(index);  }
+
 private:
 	vector<string> names_;
 
@@ -59,29 +83,4 @@ private:
 			pMoniker->Release();
 		}
 	}
-public:
-	CameraList()
-		: names_()
-	{
-
-	}
-
-	void update()
-	{
-		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		if (FAILED(hr)) return;
-
-		IEnumMoniker *pEnum;
-		hr = enumerateDevices(CLSID_VideoInputDeviceCategory, &pEnum);
-		if (SUCCEEDED(hr)) {
-			displayDeviceInformation(pEnum);
-			pEnum->Release();
-		}
-
-		CoUninitialize();
-	}
-
-	int size() { return names_.size();  }
-
-	string getName(int index) { return names_.at(index);  }
 };

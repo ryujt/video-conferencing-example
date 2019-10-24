@@ -20,23 +20,13 @@ typedef function<void(SimpleThread*)> SimpleThreadEvent;
 
 class SimpleThread
 {
-private:
-	std::thread thread_;
-	std::mutex mutex_;
-	std::condition_variable_any condition_;
-private:
-	bool is_terminated_;
 public:
-	SimpleThread(const SimpleThreadEvent& event_handler)
+	SimpleThread(const SimpleThreadEvent& event)
+		: is_terminated_(false), on_execute_(event)
 	{
-		is_terminated_ = false;
-
-		thread_ = std::thread(
-			[&]()
-			{
-				event_handler(this);
-			}
-		);
+		thread_ = std::thread([&]() {
+			on_execute_(this);
+		});
 	}
 		
 	~SimpleThread()
@@ -84,8 +74,16 @@ public:
 			TerminateThread(thread_.native_handle(), 0);
 		#endif	
 	}
-public:
+
 	bool isTerminated() { return is_terminated_;  }
+private:
+	std::thread thread_;
+	std::mutex mutex_;
+	std::condition_variable_any condition_;
+
+	bool is_terminated_;
+
+	SimpleThreadEvent on_execute_;
 };
 
 #endif  // RYULIB_SIMPLETHREAD_HPP
