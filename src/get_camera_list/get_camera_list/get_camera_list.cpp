@@ -1,36 +1,13 @@
 #include <iostream>
-#include <opencv2/opencv.hpp>
-
-using namespace cv;
+#include <ryulib/CameraList.hpp>
 
 int main()
 {
-	Mat image;
-
-	VideoCapture cap;
-	//cap.set(CAP_PROP_FRAME_WIDTH, 320);
-	//cap.set(CAP_PROP_FRAME_HEIGHT, 240);
-	//cap.set(CAP_PROP_FRAME_WIDTH, 1280);
-	//cap.set(CAP_PROP_FRAME_HEIGHT, 720);
-	cap.open(0);
-	if (cap.isOpened() == false) {
-		printf("error! \n");
-		return;
+	CameraList cameralist;
+	cameralist.update();
+	for (int i = 0; i < cameralist.size(); i++) {
+		printf("%d: %s", i, cameralist.getName(i).c_str());
 	}
 
-	while (true) {
-		cap.read(image);
-
-		//size_t sizeInBytes = image.total() * image.elemSize() / (1280 * 720);
-		//printf("sizeInBytes: %d \n", sizeInBytes);
-
-		//Mat dst;
-		//dst = rotate(image, 90);
-		//dst = rotate(image, 180);
-
-		imshow("Camera View", image);
-		//imshow("Camera View", dst);
-
-		if (waitKey(20) == 0x1B) break;	
-	}
+	return 0;
 }
