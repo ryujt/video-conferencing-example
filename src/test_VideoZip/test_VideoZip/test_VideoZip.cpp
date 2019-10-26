@@ -31,8 +31,6 @@ int main(int argc, char* args[])
 		imshow("Camera View", image);
 
 		if (video_zip.encode(image.data, 24)) printf("encode: %d \n", video_zip.getSize());
-
-		if (waitKey(20) == 0x1B) break;	
 	}
 
 	return 0;

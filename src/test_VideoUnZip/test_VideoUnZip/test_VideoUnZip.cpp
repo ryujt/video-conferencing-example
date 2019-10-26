@@ -44,8 +44,6 @@ int main(int argc, char* args[])
 				window.showBitmap32(video_unzip.getBitmap());
 			}
 		}
-
-		if (waitKey(20) == 0x1B) break;	
 	}
 
 	return 0;
