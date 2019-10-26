@@ -13,7 +13,8 @@
 
 using namespace std;
 
-const int BUFFER_SIZE = 32 * 1024;
+const int BUFFER_SIZE = 1024 * 1024;
+const int PIXEL_SIZE = 3;
 
 class VideoZip {
 public:
@@ -25,11 +26,13 @@ public:
 	~VideoZip()
 	{
 		if (data_ != nullptr) delete data_;
-		//vpx_img_free(&img);
+		close();
 	}
 
 	bool open(int width, int height)
 	{
+		close();
+
 		if (!vpx_img_alloc(&img_, VPX_IMG_FMT_I420 , width, height, 1)) {
 			printf("error - vpx_img_alloc \n");
 			return false;
@@ -37,6 +40,7 @@ public:
 
 		if (vpx_codec_enc_config_default(interfaceEnc, &cfgEnc_, 0)) {
 			printf("error - vpx_codec_enc_config_default \n");
+			vpx_img_free(&img_);
 			return false;
 		}
 
@@ -53,19 +57,30 @@ public:
 
 		if (vpx_codec_enc_init(&codec_, interfaceEnc, &cfgEnc_, 0)) {
 			printf("error - vpx_codec_enc_init \n");
+			vpx_img_free(&img_);
 			return false;
 		}
 
+		is_opened = true;
 		return true;
+	}
+
+	void close()
+	{
+		if (is_opened) {
+			is_opened = false;
+			vpx_img_free(&img_);
+			vpx_codec_destroy(&codec_);
+		}
 	}
 
 	bool encode(void* bitmap, int depth)
 	{
-		RGBtoYUV420((unsigned char*) bitmap, img_.planes[0], cfgEnc_.g_w, cfgEnc_.g_h, 4);
+		RGBtoYUV420((unsigned char*) bitmap, img_.planes[0], cfgEnc_.g_w, cfgEnc_.g_h, PIXEL_SIZE);
 
 		int frame_cnt = 0;
 		int flags = 0;
-		unsigned long deadline = VPX_DL_REALTIME;
+		unsigned long deadline = VPX_DL_GOOD_QUALITY;
 		if (vpx_codec_encode(&codec_, &img_, frame_cnt, 1, flags, deadline)) {
 			return false;
 		}
@@ -97,13 +112,19 @@ public:
 
 		return true;
 	}
+
+	int getSize() { return size_; }
+
 private:
-	long long pts_;
 	void* data_ = nullptr;
-	int size_;
-	vpx_image_t	img_;
 	vpx_codec_enc_cfg cfgEnc_;
 	vpx_codec_ctx_t codec_;
+	vpx_image_t	img_;
+
+	bool is_opened = false;
+
+	long long pts_;
+	int size_;
 };
 
 #endif  // RYU_VIDEOZIP_HPP

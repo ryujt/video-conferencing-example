@@ -30,7 +30,8 @@ int main(int argc, char* args[])
 		cap.read(image);
 		imshow("Camera View", image);
 
-		printf("encode: %d \n", video_zip.encode(image.data, 24));
+		if (video_zip.encode(image.data, 24)) printf("encode: %d \n", video_zip.getSize());
+//		if (video_zip.encode(image.data, 24)) printf("encode: %d,  %d \n", video_zip.getPTS(), video_zip.getSize());
 
 		if (waitKey(20) == 0x1B) break;	
 	}
