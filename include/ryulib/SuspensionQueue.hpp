@@ -30,9 +30,6 @@ public:
 		condition_.notify_all();
 	}
 
-	/**
-		terminate() 되고나면 NULL이 리턴 됨을 주의해야 한다.
-	*/
 	T pop() 
 	{
 		std::unique_lock<std::mutex> lock(mutex_);
@@ -63,9 +60,6 @@ public:
 		return item;
 	}
 
-	/**
-		pop에서 무한정 기다리게 되어 종료 처리에서 문제가 될 때, 데이터가 없어도 강제로 깨운다.
-	*/
 	void terminate() 
 	{
 		is_terminated_ = true;
