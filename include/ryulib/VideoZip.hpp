@@ -47,7 +47,7 @@ public:
 		cfgEnc_.rc_overshoot_pct  = 0;
 		cfgEnc_.g_w = width;
 		cfgEnc_.g_h = height;
-		//cfgEnc_.rc_target_bitrate = 
+		cfgEnc_.rc_target_bitrate = 32 * 1024;
 
 		if (vpx_codec_enc_init(&codec_, interfaceEnc, &cfgEnc_, 0)) {
 			printf("error - vpx_codec_enc_init \n");
