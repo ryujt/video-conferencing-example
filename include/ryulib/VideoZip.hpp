@@ -3,18 +3,12 @@
 
 #include <vpx/vpx_codec.h>
 #include <vpx/vpx_encoder.h>
-#include <vpx/vpx_decoder.h>
 #include <vpx/vp8cx.h>
-#include <vpx/vp8dx.h>
 #include <ryulib/yuv_tools.hpp>
 
 #define interfaceEnc (vpx_codec_vp8_cx())
-#define interfaceDec (vpx_codec_vp8_dx())
 
 using namespace std;
-
-const int BUFFER_SIZE = 1024 * 1024;
-const int PIXEL_SIZE = 3;
 
 class VideoZip {
 public:
@@ -61,14 +55,14 @@ public:
 			return false;
 		}
 
-		is_opened = true;
+		is_opened_ = true;
 		return true;
 	}
 
 	void close()
 	{
-		if (is_opened) {
-			is_opened = false;
+		if (is_opened_) {
+			is_opened_ = false;
 			vpx_img_free(&img_);
 			vpx_codec_destroy(&codec_);
 		}
@@ -113,15 +107,19 @@ public:
 		return true;
 	}
 
+	void* getData() { return data_; }
 	int getSize() { return size_; }
 
 private:
+	static const int BUFFER_SIZE = 1024 * 1024;
+	static const int PIXEL_SIZE = 3;
+
 	void* data_ = nullptr;
 	vpx_codec_enc_cfg cfgEnc_;
 	vpx_codec_ctx_t codec_;
 	vpx_image_t	img_;
 
-	bool is_opened = false;
+	bool is_opened_ = false;
 
 	long long pts_;
 	int size_;
