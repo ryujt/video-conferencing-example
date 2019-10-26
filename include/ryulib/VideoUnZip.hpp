@@ -21,6 +21,11 @@ public:
 		close();
 	}
 
+	/** 비디오 디코더를 준비시킵니다.
+	@param width 디코딩 할 영상의 넓이 (가로 크기)
+	@param height 디코딩 할 영상의 높이 (세로 크기)
+	@return 디코딩 준비 중 에러가 없으면 true가 리턴됩니다.
+	*/
 	bool open(int width, int height)
 	{
 		close();
@@ -40,12 +45,14 @@ public:
 		return true;
 	}
 
+	/** 디코더를 초기화 시킵니다. 화상 채팅 중 상대가 접속이 끊겨서 다시 입장한 경우 등에 활용할 수 있습니다. */
 	void refresh()
 	{
 		int flags = 0;
 		vpx_codec_dec_init(&codec_, interfaceDec, &cfgDec_, flags);
 	}
 
+	/** 디코더 사용을 중단합니다. */
 	void close()
 	{
 		if (is_opened_) {
@@ -55,6 +62,11 @@ public:
 		}
 	}
 
+	/** 영상을 디코딩 합니다.
+	@param bitmap 디코딩 할 데이터
+	@param size 디코딩 할 데이터의 크기
+	@return 디코딩 중 에러가 없으면 true가 리턴됩니다.
+	*/
 	bool decode(void* data, int size)
 	{
 		unsigned char* frame = (unsigned char *) data;
@@ -90,6 +102,7 @@ public:
 		return true;	
 	}
 
+	/** 디코딩이 완료된 BITMAP의 데이터 */
 	void* getBitmap() { return bitmap_; }
 
 private:

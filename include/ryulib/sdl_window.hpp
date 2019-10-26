@@ -7,6 +7,11 @@ using namespace std;
 
 class WindowSDL {
 public:
+	/** 영상을 출력하기 위한 윈도우를 생성(오픈)합니다.
+	@param caption 윈도우의 제목
+	@param width 윈도우의 넓이 (가로 크기)
+	@param height 윈도우의 높이 (세로 크기)
+	*/
 	bool open(string caption, int width, int height)
 	{
 		close();
@@ -28,6 +33,7 @@ public:
 		return true;
 	}
 
+	/** 윈도우를 닫습니다. */
 	void close()
 	{
 		if (is_opened_) {
@@ -37,6 +43,9 @@ public:
 		}
 	}
 
+	/** 32비트 BITMAP을 윈도우에 표시합니다.
+	@param bitmap 표시할 BITMAP 데이터
+	*/
 	void showBitmap32(void* bitmap)
 	{
 		surface_ = SDL_CreateRGBSurfaceFrom(bitmap, width_, height_, 32, width_*4, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);

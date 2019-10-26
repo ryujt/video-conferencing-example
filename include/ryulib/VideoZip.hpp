@@ -23,6 +23,11 @@ public:
 		close();
 	}
 
+	/** 비디오 인코더를 준비시킵니다.
+	@param width 인코딩 할 영상의 넓이 (가로 크기)
+	@param height 인코딩 할 영상의 높이 (세로 크기)
+	@return 인코딩 준비 중 에러가 없으면 true가 리턴됩니다.
+	*/
 	bool open(int width, int height)
 	{
 		close();
@@ -59,6 +64,7 @@ public:
 		return true;
 	}
 
+	/** 인코더 사용을 중단합니다. */
 	void close()
 	{
 		if (is_opened_) {
@@ -68,6 +74,11 @@ public:
 		}
 	}
 
+	/** 영상을 인코딩 합니다.
+	@param bitmap 인코딩 할 BITMAP 데이터
+	@param depth 인코딩 할 BITMAP의 색상수 (비트단위, 현재는 24비트만 가능)
+	@return 인코딩 중 에러가 없으면 true가 리턴됩니다.
+	*/
 	bool encode(void* bitmap, int depth)
 	{
 		RGBtoYUV420((unsigned char*) bitmap, img_.planes[0], cfgEnc_.g_w, cfgEnc_.g_h, PIXEL_SIZE);
@@ -107,7 +118,10 @@ public:
 		return true;
 	}
 
+	/** 인코딩 결과 데이터 */
 	void* getData() { return data_; }
+
+	/** 인코딩 결과 데이터의 크기 */
 	int getSize() { return size_; }
 
 private:

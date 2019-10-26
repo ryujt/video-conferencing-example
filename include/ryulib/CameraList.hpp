@@ -16,11 +16,8 @@ using namespace std;
 class CameraList
 {
 public:
-	CameraList()
-		: names_()
-	{
-	}
-
+	/** 카메라 목록을 갱신합니다.
+	*/
 	void update()
 	{
 		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
@@ -36,7 +33,14 @@ public:
 		CoUninitialize();
 	}
 
+	/** 찾아낸 카메라의 개수입니다.
+	@return 카메라 개수
+	*/
 	int size() { return names_.size();  }
+
+	/** 카메라의 이름을 가져옵니다.
+	@param index 가져올 카메라의 순번 (순번은 0부터 시작함)
+	*/
 	string getName(int index) { return names_.at(index);  }
 
 private:
