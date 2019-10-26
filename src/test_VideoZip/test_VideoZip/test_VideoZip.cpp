@@ -10,7 +10,7 @@ int main(int argc, char* args[])
 	int height = 480;
 
 	VideoCapture cap;
-	cap.set(CAP_PROP_CONVERT_RGB, false);
+	cap.set(CAP_PROP_CONVERT_RGB, true);
 	cap.set(CAP_PROP_FRAME_WIDTH, width);
 	cap.set(CAP_PROP_FRAME_HEIGHT, height);
 	cap.open(0);
