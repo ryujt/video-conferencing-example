@@ -17,7 +17,7 @@ public:
 	@param sampe_rate 오디오의 sampling rate. 초당 캡쳐할 샘플링(오디오의 데이터) 개수
 	*/
 	AudioZip(int channels, int sampe_rate)
-		: audio_input_(channels, sampe_rate), audio_encoder_(channels, sampe_rate)
+		: audio_input_(channels, sampe_rate, FRAMES_PER_BUFFER), audio_encoder_(channels, sampe_rate)
 	{
 		audio_encoder_.setOnError(
 			[&](const void* obj, int error_code) {

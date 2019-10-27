@@ -1,6 +1,7 @@
 ﻿#ifndef RYU_SDL_WINDOW_HPP
 #define RYU_SDL_WINDOW_HPP
 
+#include <string>
 #include <SDL2/SDL.h>
 
 using namespace std;
@@ -57,6 +58,20 @@ public:
 			//
 		}
 		SDL_FreeSurface(surface_);
+		SDL_DestroyTexture(texture_);
+	}
+
+	/** YUV 포멧 이미지를 윈도우에 표시합니다. */
+	void showYUV(const Uint8* y_plane, int y_pitch, const Uint8* u_plane, int u_pitch, const Uint8* v_plane, int v_pitch)
+	{
+		SDL_Texture* texture_ = SDL_CreateTexture(renderer_, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, width_, height_);
+		SDL_UpdateYUVTexture(texture_, NULL, y_plane, y_pitch, u_plane, u_pitch, v_plane, v_pitch);
+		try {
+			SDL_RenderCopy(renderer_, texture_, NULL, NULL);
+			SDL_RenderPresent(renderer_);
+		} catch (...) {
+			//
+		}
 		SDL_DestroyTexture(texture_);
 	}
 

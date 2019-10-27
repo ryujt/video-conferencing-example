@@ -9,7 +9,7 @@ int main(void) {
 		printf("Encoded size: %d \n", size);
 	});
 
-	AudioInput audio_input(2, 48000);
+	AudioInput audio_input(2, 48000, 3840);
 	audio_input.setOnData([&](const void* obj, const void* buffer, int buffer_size) {
 		printf("original size: %d \n", buffer_size);
 		encoder.add(buffer, buffer_size);

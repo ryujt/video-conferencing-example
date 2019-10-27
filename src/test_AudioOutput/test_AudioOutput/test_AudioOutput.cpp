@@ -6,10 +6,10 @@ int main()
 {
 	Audio::init();
 
-	AudioOutput audio_output(2, SAMPLE_RATE);
+	AudioOutput audio_output(2, 48000, 3840);
 	audio_output.open();
 
-	AudioInput audio_input(2, SAMPLE_RATE);
+	AudioInput audio_input(2, 48000, 3840);
 	audio_input.setOnData([&](const void* obj, const void* data, int size) {
 		audio_output.play(data, size);
 	});
