@@ -15,7 +15,7 @@ int main()
 	});
 	audio_input.open();
 
-	while (audio_input.is_active()) {
+	while (audio_input.isActive()) {
 		Pa_Sleep(1000);
 	}
 
