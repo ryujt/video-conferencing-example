@@ -106,10 +106,8 @@ private:
 	static int recordCallback(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, 
 		const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData) 
 	{
-
 		AudioInput *audio_input = (AudioInput *) userData;
 		if (audio_input->on_data_ != nullptr) audio_input->on_data_(audio_input, inputBuffer, audio_input->buffer_size_);
-
 		return paContinue;
 	}
 
@@ -207,9 +205,7 @@ private:
 		PaStreamCallbackFlags statusFlags,
 		void *userData) 
 	{
-
 		AudioOutput *audio_output = (AudioOutput *) userData;
-
 		Memory* memory;
 		if (audio_output->queue_.pop(memory)) {
 			memcpy(outputBuffer, memory->getData(), memory->getSize());
@@ -217,7 +213,6 @@ private:
 		} else {
 			memcpy(outputBuffer, audio_output->mute_, audio_output->buffer_size_);
 		}
-
 		return paContinue;
 	}
 
