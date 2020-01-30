@@ -8,8 +8,8 @@ using namespace cv;
 
 int main(int argc, char* args[])
 {
-	int width  = 640;
-	int height = 480;
+	int width  = 320;
+	int height = 240;
 
 	VideoCapture cap;
 	cap.set(CAP_PROP_CONVERT_RGB, true);
@@ -21,8 +21,10 @@ int main(int argc, char* args[])
 		return 0;
 	}
 
-	width  = cap.get(CAP_PROP_FRAME_WIDTH);
-	height = cap.get(CAP_PROP_FRAME_HEIGHT);
+	int cam_width  = cap.get(CAP_PROP_FRAME_WIDTH);
+	int cam_height = cap.get(CAP_PROP_FRAME_HEIGHT);
+
+	printf("cam_width: %d, cam_height: %d \n", cam_width, cam_height);
 
 	VideoZip video_zip;
 	video_zip.open(width, height);
@@ -33,11 +35,18 @@ int main(int argc, char* args[])
 	WindowSDL window;
 	window.open("VideoZip test", width, height);
 
-	Mat image;
-	while (true) {
-		cap.read(image);
+	Mat img_src;
+	Mat img_dst;
 
-		if (video_zip.encode(image.data, 24)) {
+	// cap.read(img_src);
+	// resize(img_src, img_dst, Size(width, height), 0, 0, INTER_LINEAR);
+	// video_zip.encode(img_dst.data, 24);
+
+	while (true) {
+		cap.read(img_src);
+		resize(img_src, img_dst, Size(width, height), 0, 0, INTER_LINEAR);
+
+		if (video_zip.encode(img_dst.data, 24)) {
 			printf("encode: %d \n", video_zip.getSize());
 
 			if (video_unzip.decode(video_zip.getData(), video_zip.getSize())) {
