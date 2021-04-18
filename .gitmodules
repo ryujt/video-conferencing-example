@@ -1,0 +1,3 @@
+[submodule "lib/ryulib-cpp"]
+	path = lib/ryulib-cpp
+	url = https://github.com/ryujt/ryulib-cpp.git
