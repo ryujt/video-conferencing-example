@@ -16,9 +16,10 @@
 * opus
 * portaudio
 * opencv4
+* ffmpeg[avresample,nvcodec,x264]
 
 > vcpkg를 사용하시는 경우라면 아래와 같이 설치하시면 됩니다.
->> C:\...> vcpkg install boost-asio libvpx opus portaudio opencv4
+>> C:\...> vcpkg install boost-asio libvpx opus portaudio opencv4 ffmpeg[avresample,nvcodec,x264]
 
 
 ### RyuLib for C++
