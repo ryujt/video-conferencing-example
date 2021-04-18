@@ -19,7 +19,7 @@ int main()
 	});
 
 	server.setOnReceived([&](Connection* connection, Packet* packet) {
-		printf("Received - %d, %s \n", packet->packet_type, packet->getText());
+		printf("Received - %d, %d \n", packet->packet_type, packet->getDataSize());
 		server.sendToOther(connection, packet);
 	});
 
