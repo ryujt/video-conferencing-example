@@ -38,10 +38,6 @@ int main(int argc, char* args[])
 	Mat img_src;
 	Mat img_dst;
 
-	// cap.read(img_src);
-	// resize(img_src, img_dst, Size(width, height), 0, 0, INTER_LINEAR);
-	// video_zip.encode(img_dst.data, 24);
-
 	while (true) {
 		cap.read(img_src);
 		resize(img_src, img_dst, Size(width, height), 0, 0, INTER_LINEAR);
