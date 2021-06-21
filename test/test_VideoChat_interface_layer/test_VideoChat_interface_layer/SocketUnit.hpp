@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ryulib/SocketClient.hpp>
 #include <string>
+#include <functional>
 
 using namespace std;
 
