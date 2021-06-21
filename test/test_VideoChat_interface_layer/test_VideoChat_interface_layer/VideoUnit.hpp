@@ -1,8 +1,10 @@
 #pragma once
 
-#include <ryulib/base.hpp>
+#include <functional>
 
-using namespace ryulib;
+using namespace std;
+
+typedef function<void(const void*, int)> VideoDataEvent;
 
 class VideoUnit {
 public:
@@ -21,8 +23,8 @@ public:
 
 	}
 
-	void setOnData(DataEvent event) { onData = event; }
+	void setOnData(VideoDataEvent event) { onData = event; }
 
 private:
-	DataEvent onData = nullptr;
+	VideoDataEvent onData = nullptr;
 };
