@@ -43,7 +43,7 @@ int main()
 		}
 	});
 
-	socket.connect("127.0.0.1", 1234);
+	socket.connect("3.34.52.188", 1001);
 
 	while (true) {
 		string line;
